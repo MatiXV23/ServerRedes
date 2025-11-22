@@ -1,7 +1,8 @@
 import json
 from responses.responses import Response200, Response201
 from responses.errors import BadRequestErr
-from fotos import FOTOS_DIR
+
+FOTOS_DIR = "fotos"
 
 usuarios_db = [
     {"id": 1, "nombre": "Juan Pérez", "foto": "juan.jpg"},

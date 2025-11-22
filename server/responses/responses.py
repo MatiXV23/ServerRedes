@@ -15,7 +15,7 @@ def Response200(body, content_type: str, close_connection:bool = False):
 def Response201(body, content_type: str, close_connection:bool = False):
     payload = json.dumps({"data": body})
     return (
-        "HTTP/1.1 201 CREATED\r\n"
+        "HTTP/1.1 201 Created\r\n"
         "Access-Control-Allow-Origin: *\r\n"
         "Access-Control-Allow-Methods: GET, POST, OPTIONS\r\n"
         "Access-Control-Allow-Headers: Content-Type\r\n"
