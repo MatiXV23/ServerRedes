@@ -9,7 +9,7 @@ def NotImplementedErr(body = None, close_connection:bool = False):
         )
 
 
-def NotFoundErr(body = None):
+def NotFoundErr(body = None, close_connection:bool = False):
     return (
             "HTTP/1.1 404 Not Found\r\n"
             "Content-Type: text/html; charset=utf-8\r\n"

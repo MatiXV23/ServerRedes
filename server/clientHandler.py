@@ -1,17 +1,15 @@
-from errors import NotImplementedErr, NotFoundErr
-from responses import Response200
+from responses.errors import *
+from responses.responses import *
+
+from handlers.users import getUserListRes
+from handlers.fotos import getFotoRes
 
 
-imgs = [
-    "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=300&fit=crop",
-    "https://cdn.shortpixel.ai/spai/q_lossless+w_888+to_auto+ret_img/independent-photo.com/wp-content/uploads/2022/03/Karen-Pape-1800x1200.jpeg",
-    "https://www.blogdelfotografo.com/wp-content/uploads/2017/10/landscape-640617_1920.jpg"
-]
-
+titulo = 'Listado Cigaran Perez'
 
 def handle_client(conn, addr):
     print(f"Conexión desde {addr}")
-    cont = 0
+
     with conn:
         while True:
             request = conn.recv(1024).decode('utf-8')
@@ -24,17 +22,46 @@ def handle_client(conn, addr):
                 conn.sendall(b"HTTP/1.1 400 Bad Request\r\n\r\n")
                 continue
             
+            body = ""
+            if method == "POST":
+                parts = request.split("\r\n\r\n")
+                if len(parts) > 1:
+                    body = parts[1]
+
             match path:
-                case "/foto":
-                    handle_img(cont)    
-                    cont = (cont + 1) % len(imgs)
-                    
+                case "/titulo":
+                    if method=="GET":
+                        response = Response200(titulo , 'application/json', close_connection=True)
+                    else:
+                        response = NotImplementedErr(f'Metodo {method} para {path} no implementado aun')
+                    conn.sendall(response.encode("utf-8"))
+
+                case p if p.startswith("/fotos/"):
+                    foto_name = path.split("/fotos/")[1]
+                    response = getFotoRes(foto_name)
+                    if isinstance(response, bytes):
+                        conn.sendall(response)
+                    else:
+                        conn.sendall(response.encode("utf-8"))
+                
+                case "/usuarios":
+                    match method:
+                        case "GET":
+                            response = getUserListRes()
+                            conn.sendall(response.encode("utf-8"))
+                        case "POST":
+                            response = createUserRes(body)
+                            conn.sendall(response.encode("utf-8"))
+                        case _:
+                            response = BadRequestErr("Método no permitido")
+                            conn.sendall(response.encode("utf-8"))
+                
                 case "/close":
-                    response = Response200("Nos vemos", 'application/json', close_connection=True)
+                    response = Response200('Conexion cerrada' , 'application/json', close_connection=True)
                     conn.sendall(response.encode("utf-8"))
                     conn.close()
                     return
-                    
+
                 case _: 
                     response = NotFoundErr("No se encuentra lo que buscas")
                     conn.sendall(response.encode("utf-8"))
@@ -42,7 +69,4 @@ def handle_client(conn, addr):
 
 
 
-def handle_img(idx):
-    response = Response200(imgs[idx], 'application/json')
-    conn.sendall(response.encode("utf-8"))
-    
+
