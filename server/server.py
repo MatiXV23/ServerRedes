@@ -4,7 +4,7 @@ import json
 from clientHandler import handle_client
 
 HOST = '127.0.0.1'
-PORT = 8082
+PORT = 8080
 
 
 def main():

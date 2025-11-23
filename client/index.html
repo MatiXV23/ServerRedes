@@ -1,31 +1,103 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Laboratorio 2</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
     <div class="container">
-        <div class="image-container">
-            <img id="mainImage" src="https://cdn.shortpixel.ai/spai/q_lossless+w_888+to_auto+ret_img/independent-photo.com/wp-content/uploads/2022/03/Karen-Pape-1800x1200.jpeg" alt="Imagen">
-        </div>
+      <h1 id="pageTitle">Cargando...</h1>
 
-        <button class="button" id="changeImageBtn">
-            Cambiar Imagen
+      <div class="header-actions">
+        <button class="btn btn-info" onclick="openDrawer()">
+          📋 Ver Request/Response
         </button>
-
-        <div class="text-viewer">
-            <p id="textViewer">Aquí se mostrará el texto...</p>
-        </div>
-
-        <button class="button" id="closeConn">
-            Cerrar conexion
+        <button class="btn btn-primary" onclick="openCreateModal()">
+          + Crear Usuario
         </button>
+      </div>
+
+      <div id="errorContainer"></div>
+      <div id="loadingContainer" class="loading">Cargando usuarios...</div>
+      <div id="usersGrid" class="users-grid"></div>
     </div>
-    
+
+    <!-- Modal para ver foto -->
+    <div id="photoModal" class="modal">
+      <div class="modal-content">
+        <button class="modal-close" onclick="closePhotoModal()">&times;</button>
+        <h2>Foto de Usuario</h2>
+        <div id="photoContainer"></div>
+      </div>
+    </div>
+
+    <!-- Modal para crear usuario -->
+    <div id="createModal" class="modal">
+      <div class="modal-content">
+        <button class="modal-close" onclick="closeCreateModal()">
+          &times;
+        </button>
+        <h2 class="form-title">Crear Nuevo Usuario</h2>
+        <form id="createUserForm" onsubmit="createUser(event)">
+          <div class="form-group">
+            <label>Nombre:</label>
+            <input type="text" id="userName" required />
+          </div>
+          <div class="form-group">
+            <label>Imagen:</label>
+            <div class="file-input-wrapper">
+              <label class="file-input-label" for="userImage">
+                Seleccionar imagen
+              </label>
+              <input
+                type="file"
+                id="userImage"
+                accept="image/*"
+                onchange="previewImage(event)"
+              />
+            </div>
+            <img
+              id="imagePreview"
+              class="preview-image"
+              style="display: none"
+            />
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%">
+            Crear Usuario
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Drawer para Request/Response -->
+    <div
+      id="drawerOverlay"
+      class="drawer-overlay"
+      onclick="closeDrawer()"
+    ></div>
+    <div id="drawer" class="drawer">
+      <div class="drawer-header">
+        <h2>Requests & Responses</h2>
+        <button class="drawer-close" onclick="closeDrawer()">&times;</button>
+      </div>
+      <div class="drawer-content" id="drawerContent">
+        <div class="empty-state">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+          </svg>
+          <p>No hay requests/responses aún</p>
+        </div>
+      </div>
+    </div>
 
     <script src="script.js"></script>
-</body>
+  </body>
 </html>
