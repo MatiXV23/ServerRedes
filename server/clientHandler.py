@@ -49,7 +49,7 @@ def handle_client(conn, addr):
                 headers_str, body_bytes = read_full_request(conn)
                 
                 if not headers_str:
-                    break
+                    continue
                 
                 first_line = headers_str.split("\r\n")[0]
                 print("first line:", first_line)
@@ -127,12 +127,12 @@ def handle_client(conn, addr):
                             case _:
                                 response = NotImplementedErr(f"Método no implentado aun {method}.")
                                 conn.sendall(response.encode("utf-8"))
-                    
+
 
                     case _: 
                         response = NotFoundErr("No se encuentra lo que buscas")
                         conn.sendall(response.encode("utf-8"))
-                        
+                    
             except BrokenPipeError:
                 print(f"Cliente {addr} desconectado abruptamente")
                 break
@@ -142,4 +142,4 @@ def handle_client(conn, addr):
                 traceback.print_exc()
                 break
         print("Conexión finalizada correctamente")
-        return 0
+        return

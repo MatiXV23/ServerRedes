@@ -1,6 +1,6 @@
 let imageBase64 = "";
 
-const BASE_URL = "http://10.4.200.117:8080";
+const BASE_URL = "http://localhost:8080";
 
 let requests = [];
 let responses = [];
