@@ -63,6 +63,14 @@ h1 {
   background: #0b7dda;
 }
 
+.btn-eliminar {
+  background-color: red;
+}
+
+.btn-eliminar:hover {
+  background: brown;
+}
+
 .btn-info {
   background: #ff9800;
   color: white;
@@ -168,8 +176,8 @@ h1 {
   margin-top: 20px;
 }
 
-.form-title{
-    margin-bottom: 20px;
+.form-title {
+  margin-bottom: 20px;
 }
 .form-group {
   margin-bottom: 20px;
@@ -369,4 +377,18 @@ h1 {
     width: 85%;
     right: -85%;
   }
+}
+.search-box {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.search-input {
+  width: 300px;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
 }

@@ -6,8 +6,8 @@ def Response200(body, content_type: str, close_connection:bool = False):
     
     return (
         "HTTP/1.1 200 OK\r\n"
-        "Access-Control-Allow-Origin: http://127.0.0.1:3001\r\n"
-        "Access-Control-Allow-Methods: GET, POST, OPTIONS\r\n"
+        "Access-Control-Allow-Origin: *\r\n"
+        "Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT\r\n"
         "Access-Control-Allow-Headers: Content-Type\r\n"
         f"Content-Type: {content_type}\r\n"
         f"Content-Length: {len(body.encode("utf-8"))}\r\n"
@@ -21,8 +21,8 @@ def Response201(body, content_type: str, close_connection:bool = False):
         body = json.dumps(body)
     return (
         "HTTP/1.1 201 Created\r\n"
-        "Access-Control-Allow-Origin: http://127.0.0.1:3001\r\n"
-        "Access-Control-Allow-Methods: GET, POST, OPTIONS\r\n"
+        "Access-Control-Allow-Origin: *\r\n"
+        "Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT\r\n"
         "Access-Control-Allow-Headers: Content-Type\r\n"
         f"Content-Type: {content_type}\r\n"
         f"Content-Length: {len(body.encode("utf-8"))}\r\n"

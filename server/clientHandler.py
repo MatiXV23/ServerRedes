@@ -8,10 +8,6 @@ from handlers.fotos import getFotoRes
 titulo = 'Listado Cigaran Perez'
 
 def read_full_request(conn):
-    """
-    Lee el request HTTP completo, incluyendo headers y body.
-    Retorna: (headers_str, body_bytes)
-    """
     # Leer headers
     headers = b""
     while b"\r\n\r\n" not in headers:
@@ -44,7 +40,7 @@ def read_full_request(conn):
 
 
 def handle_client(conn, addr):
-    print(f"Conexión desde {addr}")
+    print(f"\nNueva conexión desde {addr}\n")
 
     with conn:
         while True:
@@ -63,8 +59,13 @@ def handle_client(conn, addr):
                     print(f"Request malformado: {first_line}")
                     break
                 
-                method, path, _ = parts
+                method, path, version = parts
                 
+                if version != 'HTTP/1.1':
+                    res = VersionNotSupported(f'Version actual: {version}')
+                    conn.sendall(res.encode('utf-8'))
+                    continue
+
                 # Decodificar body si existe
                 body = ""
                 if body_bytes:
@@ -84,7 +85,7 @@ def handle_client(conn, addr):
                 response = (
                     "HTTP/1.1 204 No Content\r\n"
                     "Access-Control-Allow-Origin: *\r\n"
-                    "Access-Control-Allow-Methods: GET, POST, OPTIONS\r\n"
+                    "Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT\r\n"
                     "Access-Control-Allow-Headers: Content-Type\r\n"
                     "Access-Control-Max-Age: 86400\r\n"
                     "\r\n"
@@ -94,6 +95,12 @@ def handle_client(conn, addr):
 
             try:
                 match path:
+                    case "/close":
+                        response = Response200('Conexion cerrada', 'application/json', close_connection=True)
+                        conn.sendall(response.encode("utf-8"))
+                        conn.close()
+                        break
+
                     case "/titulo":
                         if method == "GET":
                             response = Response200(titulo, 'text/plain', close_connection=False)
@@ -114,15 +121,13 @@ def handle_client(conn, addr):
                             case "POST":
                                 response = createUserRes(body)
                                 conn.sendall(response.encode("utf-8"))
+                            case "PUT":
+                                response = NotImplementedErr(f"Método no implentado aun {method}.")
+                                conn.sendall(response.encode("utf-8"))
                             case _:
-                                response = NotImplementedErr("Método no implentado aun")
+                                response = NotImplementedErr(f"Método no implentado aun {method}.")
                                 conn.sendall(response.encode("utf-8"))
                     
-                    case "/close":
-                        response = Response200('Conexion cerrada', 'application/json', close_connection=True)
-                        conn.sendall(response.encode("utf-8"))
-                        conn.close()
-                        return
 
                     case _: 
                         response = NotFoundErr("No se encuentra lo que buscas")
@@ -136,3 +141,5 @@ def handle_client(conn, addr):
                 import traceback
                 traceback.print_exc()
                 break
+        print("Conexión finalizada correctamente")
+        return 0

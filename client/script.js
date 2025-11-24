@@ -1,6 +1,6 @@
 let imageBase64 = "";
 
-const BASE_URL = "http://127.0.0.1:8080";
+const BASE_URL = "http://10.4.200.117:8080";
 
 let requests = [];
 let responses = [];
@@ -61,6 +61,14 @@ window.fetch = async function (...args) {
   return response;
 };
 
+async function closeConection() {
+  try {
+    await fetch(BASE_URL + "/close");
+  } catch (error) {
+    console.error("Error al cerrar conexión:", error);
+  }
+}
+
 async function loadTitle() {
   try {
     const response = await fetch(BASE_URL + "/titulo");
@@ -90,6 +98,9 @@ async function loadUsers() {
                               <div class="user-name">${user.nombre}</div>
                               <button class="btn btn-secondary" onclick="viewPhoto('${user.foto}')">
                                   Ver Foto
+                              </button>
+                              <button class="btn btn-secondary" onclick="editUser(${user.id})">
+                                Editar
                               </button>
                           `;
       grid.appendChild(card);
@@ -165,6 +176,89 @@ async function createUser(event) {
     console.error("Error creando usuario:", error);
     showError("Error al crear el usuario");
   }
+}
+
+async function searchUser() {
+  const userId = document.getElementById("searchUserId").value.trim();
+
+  if (!userId) {
+    showError("Debe ingresar un ID");
+    return;
+  }
+
+  try {
+    const response = await fetch(`${BASE_URL}/usuarios`);
+
+    if (!response.ok) {
+      showError("Usuario no encontrado");
+      return;
+    }
+
+    const user = await response.json();
+
+    // Mostramos los datos como vos prefieras
+    displaySearchedUser(user);
+  } catch (error) {
+    console.error("Error buscando usuario:", error);
+    showError("Error al buscar usuario");
+  }
+}
+
+async function editUser(userId) {
+  console.log("CLICK PUT");
+  const updatedData = {
+    nombre: "editado",
+    imagen_base64: null,
+  };
+
+  try {
+    const response = await fetch(`${BASE_URL}/usuarios`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedData),
+    });
+
+    if (response.ok) {
+      closeEditModal();
+      loadUsers();
+
+      document.getElementById("editUserForm").reset();
+      document.getElementById("editImagePreview").style.display = "none";
+
+      imageBase64 = "";
+    } else {
+      showError("Error al editar el usuario");
+    }
+  } catch (error) {
+    console.error("Error editando usuario:", error);
+    showError("Error al editar el usuario");
+  }
+}
+
+function previewEditImage(event) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      imageBase64 = e.target.result.split(",")[1];
+      const preview = document.getElementById("editImagePreview");
+      preview.src = e.target.result;
+      preview.style.display = "block";
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function openEditModal(user) {
+  document.getElementById("editUserName").value = user.nombre;
+
+  const preview = document.getElementById("editImagePreview");
+  preview.src = `${BASE_URL}/fotos/${user.foto}`;
+  preview.style.display = "block";
+
+  document.getElementById("editModal").classList.add("active");
 }
 
 function loadReqRes() {

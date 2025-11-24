@@ -17,6 +17,19 @@
         <button class="btn btn-primary" onclick="openCreateModal()">
           + Crear Usuario
         </button>
+        <button class="btn btn-eliminar" onclick="closeConection()">
+          - Cerrar Conexión
+        </button>
+      </div>
+
+      <div class="search-box">
+        <input
+          placeholder="Buscar usuario por ID..."
+          type="number"
+          id="searchUserId"
+          class="search-input"
+        />
+        <button class="btn btn-secondary" onclick="searchUser()">Buscar</button>
       </div>
 
       <div id="errorContainer"></div>
