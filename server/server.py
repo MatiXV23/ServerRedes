@@ -3,7 +3,7 @@ import threading
 import json
 from clientHandler import handle_client
 
-HOST = 'localhost'
+HOST = '0.0.0.0'
 PORT = 8080
 
 
